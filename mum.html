@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>قانوني اليومي — قراءة الكتاب المقدس</title>
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --card: #ffffff;
+      --text: #1f2933;
+      --muted: #616e7c;
+      --primary: #2c5e4f;
+      --primary-light: #e6f0ec;
+      --accent: #9c6f3b;
+      --border: #e4e0d8;
+      --danger: #b42318;
+      --font-size: 19px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding-bottom: 84px;
+    }
+
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--primary);
+    }
+
+    .badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 18px 16px;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    h1, h2, h3 {
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    p.desc {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"],
+    input[type="time"],
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #fcfbf9;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .option-btn {
+      border: 1.5px solid var(--border);
+      background: #fcfbf9;
+      color: var(--text);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .option-btn.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: var(--primary-light);
+      color: var(--primary);
+      margin-top: 8px;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      margin-top: 8px;
+    }
+
+    .btn-danger-outline {
+      background: transparent;
+      border: 1.5px solid #fecdca;
+      color: var(--danger);
+      margin-top: 10px;
+    }
+
+    .reading-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .pill {
+      background: #f3efe6;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+
+    .scripture-box {
+      font-size: var(--font-size);
+      line-height: 2;
+      color: #18222f;
+      padding: 14px 4px;
+      border-top: 1px dashed var(--border);
+      border-bottom: 1px dashed var(--border);
+      margin: 12px 0 18px;
+    }
+
+    .font-controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .mini-btn {
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fcfbf9;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .status-banner {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 14px 0 18px;
+    }
+
+    .stat-box {
+      background: #fcfbf9;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 8px 6px;
+      z-index: 20;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 6px 4px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .toast {
+      position: fixed;
+      top: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2933;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      z-index: 50;
+      display: none;
+      max-width: 92%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">قانوني اليومي</div>
+    <div class="badge" id="headerStreak">0 يوم متواصل</div>
+  </header>
+
+  <div class="toast" id="toastBox"></div>
+
+  <main>
+    <!-- الشاشة 1: الإعداد لأول مرة -->
+    <section class="screen" id="screen-setup">
+      <div class="card">
+        <h1>ابدأ قانونك اليومي</h1>
+        <p class="desc">اختار وقت بسيط ومريح ليك كل يوم، والموقع هيحدد لك جزء القراءة اليومي ويفكرك بيه.</p>
+
+        <label for="setupName">الاسم</label>
+        <input type="text" id="setupName" placeholder="اكتب اسمك هنا..." />
+
+        <label>المدة اليومية المناسبة ليك</label>
+        <div class="options-grid" id="setupMinutesGrid">
+          <button type="button" class="option-btn" data-min="5">5 دقائق</button>
+          <button type="button" class="option-btn selected" data-min="10">10 دقائق</button>
+          <button type="button" class="option-btn" data-min="15">15 دقيقة</button>
+          <button type="button" class="option-btn" data-min="30">30 دقيقة</button>
+        </div>
+
+        <label for="setupStartPlan">نقطة البداية</label>
+        <select id="setupStartPlan">
+          <option value="gospels">الأناجيل الأربعة (بداية بمتى)</option>
+          <option value="john">إنجيل يوحنا</option>
+          <option value="acts">أعمال الرسل والرسائل</option>
+        </select>
+
+        <label for="setupNotifyTime">وقت التذكير الصباحي</label>
+        <input type="time" id="setupNotifyTime" value="07:30" />
+
+        <button type="button" class="btn btn-primary" id="saveSetupBtn">حفظ والبدء في القراءة</button>
+      </div>
+    </section>
+
+    <!-- الشاشة 2: قراءة اليوم -->
+    <section class="screen" id="screen-reading">
+      <div class="status-banner" id="doneTodayBanner">
+        تم إتمام قراءة اليوم بنجاح! الجزء التالي جاهز لبكرة.
+      </div>
+
+      <div class="card">
+        <p class="desc" id="greetingText" style="margin-bottom: 6px; font-weight: 700; color: var(--primary);">صباح الخير</p>
+        <h2 id="portionTitle">قراءة اليوم</h2>
+
+        <div class="reading-meta">
+          <span class="pill" id="metaDuration">المدة: 10 دقائق</span>
+          <span class="pill" id="metaNotifyTime">التذكير: 07:30</span>
+        </div>
+
+        <div class="font-controls">
+          <button type="button" class="mini-btn" id="fontDecBtn">تصغير الخط (أ-)</button>
+          <button type="button" class="mini-btn" id="fontIncBtn">تكبير الخط (أ+)</button>
+        </div>
+
+        <div class="scripture-box" id="scriptureContent"></div>
+
+        <button type="button" class="btn btn-primary" id="completeDayBtn">تمت قراءة اليوم</button>
+        <button type="button" class="btn btn-secondary" id="testNotifBtn">اختبار إشعار التذكير الآن</button>
+      </div>
+    </section>
+
+    <!-- الشاشة 3: المتابعة والإعدادات -->
+    <section class="screen" id="screen-settings">
+      <div class="card">
+        <h2>متابعة القانون والإعدادات</h2>
+        <p class="desc">راجع استمراريتك وعدّل المدة أو وقت التنبيه في أي وقت.</p>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-num" id="statStreak">0</div>
+            <div class="stat-label">أيام متواصلة</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="statCompleted">0</div>
+            <div class="stat-label">إجمالي الأيام المنجزة</div>
+          </div>
+        </div>
+
+        <label for="settingsName">الاسم</label>
+        <input type="text" id="settingsName" />
+
+        <label>المدة اليومية</label>
+        <div class="options-grid" id="settingsMinutesGrid">
+          <button type="button" class="option-btn" data-min="5">5 دقائق</button>
+          <button type="button" class="option-btn" data-min="10">10 دقائق</button>
+          <button type="button" class="option-btn" data-min="15">15 دقيقة</button>
+          <button type="button" class="option-btn" data-min="30">30 دقيقة</button>
+        </div>
+
+        <label for="settingsNotifyTime">وقت التذكير الصباحي</label>
+        <input type="time" id="settingsNotifyTime" />
+
+        <button type="button" class="btn btn-primary" id="enableNotifBtn">تفعيل إشعارات المتصفح</button>
+        <button type="button" class="btn btn-secondary" id="updateSettingsBtn">حفظ التعديلات</button>
+        <button type="button" class="btn btn-danger-outline" id="resetDataBtn">إعادة ضبط البيانات بالكامل</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button type="button" class="nav-btn active" data-target="screen-reading" id="navReading">
+      <span>قراءة اليوم</span>
+    </button>
+    <button type="button" class="nav-btn" data-target="screen-settings" id="navSettings">
+      <span>المتابعة والإعدادات</span>
+    </button>
+    <button type="button" class="nav-btn" data-target="screen-setup" id="navSetup">
+      <span>الإعداد الأولي</span>
+    </button>
+  </nav>
+
+  <script>
+    // عيّنة نصوص مبدئية — يمكنك توسيعها بإصحاحات كاملة من الكتاب المقدس
+    const PLANS = {
+      gospels: [
+        {
+          ref: "إنجيل متى 5 : 1 - 12",
+          text: "ولما رأى الجموع صعد إلى الجبل، فلما جلس تقدم إليه تلاميذه. ففتح فاه وعلمهم قائلاً: طوبى للمساكين بالروح، لأن لهم ملكوت السماوات. طوبى للحزانى، لأنهم يتعزون. طوبى للودعاء، لأنهم يرثون الأرض."
+        },
+        {
+          ref: "إنجيل متى 6 : 9 - 13",
+          text: "فصلوا أنتم هكذا: أبانا الذي في السماوات، ليتقدس اسمك. ليأت ملكوتك. لتكن مشيئتك كما في السماء كذلك على الأرض. خبزنا كفافنا أعطنا اليوم."
+        },
+        {
+          ref: "إنجيل مرقس 4 : 35 - 41",
+          text: "وقال لهم في ذلك اليوم لما كان المساء: لنجتز إلى العبر. فصرفوا الجمع وأخذوه كما كان في السفينة... فقام وانتهر الريح وقال للبحر: اسكت، ابكم. فسكنت الريح وصار هدوء عظيم."
+        }
+      ],
+      john: [
+        {
+          ref: "إنجيل يوحنا 1 : 1 - 5",
+          text: "في البدء كان الكلمة، والكلمة كان عند الله، وكان الكلمة الله. هذا كان في البدء عند الله. كل شيء به كان، وبغيره لم يكن شيء مما كان. فيه كانت الحياة، والحياة كانت نور الناس."
+        },
+        {
+          ref: "إنجيل يوحنا 15 : 1 - 5",
+          text: "أنا الكرمة الحقيقية وأبي الكرام. كل غصن في لا يأتي بثمر ينزعه، وكل ما يأتي بثمر ينقيه ليأتي بثمر أكثر. اثبتوا في وأنا فيكم."
+        }
+      ],
+      acts: [
+        {
+          ref: "أعمال الرسل 2 : 42 - 47",
+          text: "وكانوا يواظبون على تعليم الرسل، والشركة، وكسر الخبز، والصلوات. وصار خوف في كل نفس، وعجائب وآيات كثيرة كانت تجرى على أيدي الرسل."
+        },
+        {
+          ref: "رسالة رومية 8 : 28 - 31",
+          text: "ونحن نعلم أن كل الأشياء تعمل معًا للخير للذين يحبون الله، الذين هم مدعوون حسب قصده... إن كان الله معنا فمن علينا؟"
+        }
+      ]
+    };
+
+    const STORAGE_KEY = "daily_spiritual_rule_v1";
+
+    function getTodayKey() {
+      const now = new Date();
+      return now.toISOString().slice(0, 10);
+    }
+
+    function getYesterdayKey() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return d.toISOString().slice(0, 10);
+    }
+
+    function defaultState() {
+      return {
+        configured: false,
+        name: "",
+        minutes: 10,
+        plan: "gospels",
+        notifyTime: "07:30",
+        portionIndex: 0,
+        streak: 0,
+        completedCount: 0,
+        lastCompletedDate: null,
+        lastNotifiedDate: null,
+        fontSize: 19
+      };
+    }
+
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? { ...defaultState(), ...JSON.parse(raw) } : defaultState();
+      } catch {
+        return defaultState();
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toastBox");
+      toast.textContent = msg;
+      toast.style.display = "block";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.style.display = "none";
+      }, 3000);
+    }
+
+    function switchScreen(screenId) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.getElementById(screenId).classList.add("active");
+
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.target === screenId);
+      });
+
+      renderAll();
+    }
+
+    function bindOptionGrid(gridId, onSelect) {
+      const grid = document.getElementById(gridId);
+      grid.querySelectorAll(".option-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          grid.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          onSelect(Number(btn.dataset.min));
+        });
+      });
+    }
+
+    function syncOptionGrid(gridId, selectedMin) {
+      const grid = document.getElementById(gridId);
+      grid.querySelectorAll(".option-btn").forEach(btn => {
+        btn.classList.toggle("selected", Number(btn.dataset.min) === Number(selectedMin));
+      });
+    }
+
+    function getCurrentPortion() {
+      const list = PLANS[state.plan] || PLANS.gospels;
+      return list[state.portionIndex % list.length];
+    }
+
+    function renderAll() {
+      document.getElementById("headerStreak").textContent = `${state.streak} يوم متواصل`;
+      document.documentElement.style.setProperty("--font-size", `${state.fontSize}px`);
+
+      // قراءة اليوم
+      const helloName = state.name ? `أهلًا بك يا ${state.name}` : "قانونك الصباحي";
+      document.getElementById("greetingText").textContent = helloName;
+
+      const portion = getCurrentPortion();
+      document.getElementById("portionTitle").textContent = portion.ref;
+      document.getElementById("scriptureContent").textContent = portion.text;
+      document.getElementById("metaDuration").textContent = `المدة: ${state.minutes} دقائق`;
+      document.getElementById("metaNotifyTime").textContent = `التذكير: ${state.notifyTime}`;
+
+      const doneToday = state.lastCompletedDate === getTodayKey();
+      document.getElementById("doneTodayBanner").style.display = doneToday ? "block" : "none";
+      const completeBtn = document.getElementById("completeDayBtn");
+      completeBtn.textContent = doneToday ? "تم إنجاز قراءة اليوم ✓" : "تمت قراءة اليوم";
+      completeBtn.disabled = doneToday;
+      completeBtn.style.opacity = doneToday ? "0.65" : "1";
+
+      // المتابعة والإعدادات
+      document.getElementById("statStreak").textContent = state.streak;
+      document.getElementById("statCompleted").textContent = state.completedCount;
+      document.getElementById("settingsName").value = state.name;
+      document.getElementById("settingsNotifyTime").value = state.notifyTime;
+      syncOptionGrid("settingsMinutesGrid", state.minutes);
+
+      // الإعداد الأولي
+      document.getElementById("setupName").value = state.name;
+      document.getElementById("setupStartPlan").value = state.plan;
+      document.getElementById("setupNotifyTime").value = state.notifyTime;
+      syncOptionGrid("setupMinutesGrid", state.minutes);
+    }
+
+    // إرسال إشعار المتصفح
+    function triggerBrowserNotification(title, body) {
+      if (!("Notification" in window)) {
+        showToast("متصفحك لا يدعم الإشعارات المباشرة — التذكير ظاهر داخل الصفحة.");
+        return;
+      }
+
+      if (Notification.permission === "granted") {
+        new Notification(title, { body });
+        showToast("تم إرسال إشعار التذكير.");
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(perm => {
+          if (perm === "granted") {
+            new Notification(title, { body });
+            showToast("تم تفعيل وإرسال إشعار التذكير.");
+          } else {
+            showToast("تم رفض إذن الإشعارات؛ يمكنك تفعيله من إعدادات المتصفح.");
+          }
+        });
+      } else {
+        showToast("الإشعارات محظورة في المتصفح حاليًا.");
+      }
+    }
+
+    // التحقق من موعد التذكير الصباحي أثناء فتح الصفحة
+    function checkScheduledReminder() {
+      if (!state.configured || !state.notifyTime) return;
+      const today = getTodayKey();
+      if (state.lastNotifiedDate === today || state.lastCompletedDate === today) return;
+
+      const now = new Date();
+      const currentHHMM = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+      if (currentHHMM >= state.notifyTime) {
+        state.lastNotifiedDate = today;
+        saveState();
+        const portion = getCurrentPortion();
+        triggerBrowserNotification(
+          "قانونك اليومي جاهز",
+          `وقت القراءة (${state.minutes} دقائق): ${portion.ref}`
+        );
+      }
+    }
+
+    let tempSetupMinutes = state.minutes;
+    bindOptionGrid("setupMinutesGrid", min => { tempSetupMinutes = min; });
+    bindOptionGrid("settingsMinutesGrid", min => {
+      state.minutes = min;
+      saveState();
+      renderAll();
+    });
+
+    document.getElementById("saveSetupBtn").addEventListener("click", () => {
+      state.name = document.getElementById("setupName").value.trim();
+      state.minutes = tempSetupMinutes;
+      state.plan = document.getElementById("setupStartPlan").value;
+      state.notifyTime = document.getElementById("setupNotifyTime").value || "07:30";
+      state.configured = true;
+      saveState();
+      switchScreen("screen-reading");
+      showToast("تم حفظ إعداداتك بنجاح");
+    });
+
+    document.getElementById("completeDayBtn").addEventListener("click", () => {
+      const today = getTodayKey();
+      if (state.lastCompletedDate === today) return;
+
+      if (state.lastCompletedDate === getYesterdayKey()) {
+        state.streak += 1;
+      } else {
+        state.streak = 1;
+      }
+
+      state.completedCount 
